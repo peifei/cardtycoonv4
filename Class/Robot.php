@@ -5,8 +5,8 @@
  * Date: 2015/1/26
  * Time: 20:28
  */
-require_once 'CardListSingleton.php';
-require_once 'Crawler.php';
+//require_once 'CardListSingleton.php';
+//require_once 'Crawler.php';
 class Robot {
     private $crawler;               //the crawler do all curl action
     private $friendsObj;            //the friend object array
@@ -28,10 +28,9 @@ class Robot {
                     $this->crawler->pickBackSellCard();
                 }
                 $this->refreshPocket();
-                if($this->crawler->sellOccupiedNum<10){
-                    $this->crawler->sellCard();
-                    $this->crawler->sellOccupiedNum++;
-                }
+                echo "try sell card....\r\n";
+                $this->crawler->sellCard();
+
 
                 $robotPocketCards=CardListSingleton::getInstance()->getRobotPocketCards();
 
@@ -39,13 +38,14 @@ class Robot {
                     echo "group cards\r\n";
                     $this->groupCards($robotPocketCards);
                 }else{
-                    echo "add cards to friend\r\n";
+                    echo "add cards to friend begin\r\n";
                     $this->addCardsToFriend($robotPocketCards);
                 }
 
                 $this->refreshAllCards();
 
                 $robotPocketCards=CardListSingleton::getInstance()->getRobotPocketCards();
+                echo "current pocket cards num is:".count($robotPocketCards)."\r\n";
                 if(count($robotPocketCards)<7) {
                     $this->crawler->refreshCard();
                 }else{
@@ -69,6 +69,8 @@ class Robot {
                 $this->friendsObj[$friend_id]=new Friend($friend_id);
             }
         }
+        var_dump($this->friendsObj);
+        sleep(20);
     }
     /**
      * login action
@@ -139,14 +141,17 @@ class Robot {
 
     public function addCardsToFriend($robotPocketCards){
         foreach($robotPocketCards as $key=>$card){
+            $cardId=$card->getCardId();
+
             $suitArr=$this->testSuit($card);
             //if this card is ready for suit, then do not add to friend pocket.
             if(is_array($suitArr)){
+                echo "card $cardId is for suit\r\n";
                 continue;
             }
 
-            $cardId=$card->getCardId();
-            if(CardListSingleton::getInstance()->getCardNum($cardId)==1){
+            if(CardListSingleton::getInstance()->getCardNum($cardId)<=2){
+                //$key=$this->getEmptyFriendsPos();
                 $friend=$this->getEmptyFriendsPos();
                 if(!empty($friend)){
                     echo "do add card to friend \r\n";
@@ -154,6 +159,8 @@ class Robot {
                     /*                $this->cardList[]=$cardId;
                                     $this->cardPosList[$cardId]=$friend->getFriendId();*/
                 }
+            }else{
+                echo "card $cardId num is ".CardListSingleton::getInstance()->getCardNum($cardId)."\r\n";
             }
 
         }

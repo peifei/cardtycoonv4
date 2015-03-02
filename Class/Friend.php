@@ -1,5 +1,5 @@
 <?php
-require_once 'Card.php';
+//require_once 'Card.php';
 /**
  * Created by PhpStorm.
  * User: fxcm

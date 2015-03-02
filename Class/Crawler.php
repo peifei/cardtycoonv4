@@ -5,8 +5,8 @@
  * Date: 2015/2/10
  * Time: 14:52
  */
-require_once 'CardListSingleton.php';
-require_once 'Friend.php';
+//require_once 'CardListSingleton.php';
+//require_once 'Friend.php';
 class Crawler {
     private $ch;
     public $forBack;
@@ -80,11 +80,11 @@ class Crawler {
             $friend->setRefreshFlag(false);
             sleep(rand(1,2));
         }else{
-            echo "skip refresh friend:".$friend_id."\r\n";
+            echo "skip refresh friend:".$friend_id.",there is ".$friend->getCardsNum()." cards in pocket\r\n";
         }
     }
 
-    public function addCardToFriend(Card $card,Friend $friend){
+    public function addCardToFriend(Card $card,Friend &$friend){
         if($friend->getCardsNum()==5){
             return false;
         }
@@ -98,6 +98,7 @@ class Crawler {
         //TODO test if add success
         if($friend_id!=$card->getCardPos()){
             $card->setCardPos($friend_id);
+            $friend->addCard($card_user_id,$card);
         }
         $this->pocket[$card->getCardUserId()]=$card;
         if(false==$friend->isRefreshFlag()){
@@ -143,17 +144,21 @@ class Crawler {
         $cardList=CardListSingleton::getInstance();
         $robotPocketCards=$cardList->getRobotPocketCards();
 
+
         foreach($robotPocketCards as $card){
-            $t=$this->generatorT();
-            $cardId=$card->getCardId();
-            if($cardList->getCardNum($cardId)>1){
-                $cardUserId=$card->getCardUserId();
-                $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Fauction%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Fauction%2Fauction.aspx%3Fpi%3D1%26ajax%3D1%26m%3DAddAuction&Ajax_CallBackArgument2=cardID%3D'.$cardId.'%26cardToolID%3D-1%26timeLimited%3D8%26startPrice%3D90%26fixedPrice%3D199';
-                curl_setopt($this->ch,CURLOPT_URL,$url);
-                curl_exec($this->ch);
-                //TODO success test
-                CardListSingleton::getInstance()->removeCard($cardUserId);
-                echo "sell card :$cardId\r\n";
+            if($this->sellOccupiedNum<10){
+                $cardId=$card->getCardId();
+                if($cardList->getCardNum($cardId)>1){
+                    $t=$this->generatorT();
+                    $cardUserId=$card->getCardUserId();
+                    $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Fauction%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Fauction%2Fauction.aspx%3Fpi%3D1%26ajax%3D1%26m%3DAddAuction&Ajax_CallBackArgument2=cardID%3D'.$cardId.'%26cardToolID%3D-1%26timeLimited%3D8%26startPrice%3D90%26fixedPrice%3D199';
+                    curl_setopt($this->ch,CURLOPT_URL,$url);
+                    curl_exec($this->ch);
+                    //TODO success test
+                    CardListSingleton::getInstance()->removeCard($cardUserId);
+                    $this->sellOccupiedNum++;
+                    echo "sell card :$cardId\r\n";
+                }
             }
         }
     }

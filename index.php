@@ -1,5 +1,5 @@
 <?php
-require_once 'Class/Robot.php';
+require_once 'autoload.php';
 
 $robot=new Robot();
 $robot->run();

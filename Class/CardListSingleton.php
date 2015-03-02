@@ -6,7 +6,7 @@
  * Time: 15:55
  */
 
-require_once 'CardList.php';
+//require_once 'CardList.php';
 class CardListSingleton {
     private static $cardList;
     private function  __construct(){}

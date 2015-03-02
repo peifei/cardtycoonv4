@@ -5,7 +5,7 @@
  * Date: 2015/1/28
  * Time: 11:01
  */
-require_once 'Card.php';
+//require_once 'Card.php';
 class CardList {
     public $robotPocket;        //save cards info of robot
     public $cardObjects;        //save all cards info
