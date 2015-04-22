@@ -2,7 +2,10 @@
 require_once 'autoload.php';
 
 $robot=new Robot();
-$robot->run();
+//$robot->run();
+$robot->login();
+//$robot->updateXlPic();
+$robot->refreshXL();
 
 /**
  * get config info
@@ -13,6 +16,7 @@ function get_conf_info($confName){
     static $friend_list;
     static $login_info;
     static $xl_list;
+    static $xl_pic;
     if(empty($friend_list)){
         $friend_list=require_once 'Config'.DIRECTORY_SEPARATOR.'FriendList.php';
     }
@@ -22,6 +26,11 @@ function get_conf_info($confName){
     if(empty($xl_list)){
         $xl_list=require_once 'Config'.DIRECTORY_SEPARATOR.'XlList.php';
     }
+
+    if(empty($xl_pic)){
+        $xl_pic=parse_ini_file('xl.ini');
+    }
+
     $confName=strtolower($confName);
     switch($confName){
         case 'friendlist':
@@ -30,6 +39,8 @@ function get_conf_info($confName){
             return $login_info;
         case 'xllist':
             return $xl_list;
+        case 'xlpic':
+            return $xl_pic;
     }
 }
 

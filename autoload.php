@@ -8,6 +8,7 @@
 spl_autoload_register('auto_load');
 
 function auto_load($name){
-    if(file_exists('Class'.DIRECTORY_SEPARATOR.$name.'.php'));
-    require_once 'Class'.DIRECTORY_SEPARATOR.$name.'.php';
+    if(file_exists('Class'.DIRECTORY_SEPARATOR.$name.'.php')){
+        require_once 'Class'.DIRECTORY_SEPARATOR.$name.'.php';
+    }
 }

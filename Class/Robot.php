@@ -103,6 +103,10 @@ class Robot {
         $this->crawler->crawlRobotPocket();
     }
 
+    public function refreshXL(){
+        $this->crawler->refreshXl();
+    }
+
     public function refreshFriendsPocket(){
         foreach($this->friendsObj as $friend) {
             $this->crawler->crawlFriendPocket($friend);
@@ -166,6 +170,25 @@ class Robot {
         }
     }
 
+    public function updateXlPic(){
+        $picArr=$this->crawler->crawlXlPage();
+        var_dump($picArr);
+        echo '<hr/>';
+        sleep(5);
+        $xlimg=parse_ini_file('xl.ini');
+        //var_dump($xlimg);
+        $m=count($xlimg);
+        $file=fopen('xl.ini','a');
+
+        foreach($picArr as $pic){
+            if(!in_array($pic,$xlimg)){
+                $m++;
+                fwrite($file,'p_'.$m.'='.$pic."\r\n");
+            }
+        }
+        fclose($file);
+
+    }
 
 
 

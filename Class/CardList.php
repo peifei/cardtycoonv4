@@ -42,7 +42,6 @@ class CardList {
                 }
             }
             unset($this->cardPosList[$cardId]);
-
             foreach($this->cardObjects as $kCardUserId=>$vCard){
                 $this->refreshCardIdAndPosList($vCard->getCardId(),$kCardUserId);
             }
@@ -51,7 +50,11 @@ class CardList {
         }
     }
 
-
+    /**
+     * refresh all cardId and cardIdList info
+     * @param $cardId
+     * @param $cardUserId
+     */
     private function refreshCardIdAndPosList($cardId,$cardUserId){
         if(!in_array($cardId,$this->cardIdList)){
             $this->cardIdList[]=$cardId;

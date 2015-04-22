@@ -13,6 +13,7 @@ class Friend {
     private $refreshFlag;
 
     public function __construct($friendId){
+        $this->pocket=array();
         $this->friendId=$friendId;
         $this->setRefreshFlag(true);
     }

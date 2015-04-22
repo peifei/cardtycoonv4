@@ -208,6 +208,45 @@ class Crawler {
         }
     }
 
+    public function refreshXl(){
+        $pic_arr=get_conf_info('xlpic');
+        var_dump($pic_arr);
+        sleep(5);
+        for($i=0;$i<20000;$i++){
+            if($i%100==0){
+                echo "*********$i**********\r\n";
+            }
+            $t=$this->generatorT();
+            $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Fmy%2Fdiscard.aspx%3Fajax%3D1%26m%3DGenerateCardGold&Ajax_CallBackArgument2=';
+            curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Host:sandbox.my.mtime.com"));
+            curl_setopt($this->ch,CURLOPT_URL,$url);
+            $res=curl_exec($this->ch);
+            preg_match('/src=\\\\\\\\\\\"(.*?)\\\\\\\\\\\"/',$res,$match);
+            if(isset($match[1])){
+                echo $match[1]."\r\n";
+                if(in_array($match[1],$pic_arr)){
+                    $id=$this->parseRandomId($res);
+                    if(!empty($id)){
+                        echo "do click card....\r\n";
+                        $code=$this->parseRandomCodeImg($res);
+                        $t2=$this->generatorT();
+                        $url2='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2F&t='.$t2.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Fmy%2Fdiscard.aspx%3Fcardusercardid%3D0%26ajax%3D1%26m%3DSaveOneCard&Ajax_CallBackArgument2=randomID%3D'.$id.'%26verifyCode%3D';
+                        if(!empty($code)){
+                            $url2=$url2.$code;
+                        }
+                        curl_setopt($this->ch,CURLOPT_URL,$url2);
+                        $res2=curl_exec($this->ch);
+                        //file_put_contents('c:\\getcards.txt',$res2,FILE_APPEND);
+                        var_dump($res2);
+                        echo "click card end....\r\n";
+                        $this->crawlRobotPocket();
+                    }
+                }
+            }
+            sleep(rand(2,4));
+        }
+    }
+
     public function mixsuit($userCardIdArr,$suitId){
         $t=$this->generatorT();
         $cardUserIdStr=implode('%252C',$userCardIdArr);
@@ -224,6 +263,26 @@ class Crawler {
 
     public function panda(){
 
+    }
+
+    public function crawlXlPage(){
+        //$url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Fcenter_limit%2F&t=20153616332545809&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=center_limit%2F';
+
+        $t=$this->generatorT();
+        $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Fcenter_limit%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=center_limit%2F';
+        //$url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Fcenter_limit%2Findex-4.html&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=center_limit%2Findex-4.html';
+        curl_setopt($this->ch,CURLOPT_URL,$url);
+        curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Host:sandbox.my.mtime.com"));
+        $res=curl_exec($this->ch);
+        preg_match_all('/<p class=\\\"mt9 \\\">(.*?)<\/p>/',$res,$match);
+        $picArr=array();
+        foreach($match[1] as $str2){
+            preg_match_all('/<img src=\\\"(.*?)\\\" alt=\\\"(.*?)\\\" width=\\\"78\\\" \/>/',$str2,$match2);
+            foreach($match2[1] as $pic){
+                $picArr[]=$pic;
+            }
+        }
+        return $picArr;
     }
 
     private function parseRandomId($str){

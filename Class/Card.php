@@ -12,7 +12,7 @@ class Card {
     private $cardUserId;           //the unique id for an alive card
     private $cardPos;              //stands for where is card from,('robot' or friends id)
 
-    public function __construct($data){
+    public function __construct(Array $data){
         $this->setCardId($data['cardId']);
         $this->setSuitId($data['suitId']);
         $this->setCardUserId($data['cardUserId']);
