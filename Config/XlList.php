@@ -71,6 +71,8 @@ $xlList=array(
     '255',
     '257',
     '259',
+    '260',
+    '263'
 );
 
 return $xlList;

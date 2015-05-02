@@ -261,8 +261,49 @@ class Crawler {
 
     }
 
-    public function panda(){
+    public function panda($dogid){
+        $t=$this->generatorT();
+        $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ffriend%2F'.$dogid.'%2Findex-1.html%23f&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=friend%2F'.$dogid.'%2Findex-1.html';
+        curl_setopt($this->ch,CURLOPT_URL,$url);
+        curl_setopt($this->ch,CURLOPT_REFERER,'http://my.mtime.com/app/card/friend/'.$dogid.'/index-1.html');
+        curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Host:sandbox.my.mtime.com"));
+        $response_text=curl_exec($this->ch);
+        //判断是否登录
+        preg_match('/<a href=\\\"http:\/\/my.mtime.com\/app\/card\/friend\/'.$dogid.'\/\\\" class=\\\"(.*?)\\\">/',$response_text,$match);
+        if('online'==$match[1]){
+            if(!stristr($response_text,'card_shaoxiang')) {
+                $t = $this->generatorT();
+                $urlp = 'http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ftools%2Fuse%2F9%2F%3Ftarget%3D' . $dogid . '&t=' . $t . '&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Ftools%2Fusetoolcard.aspx%3Fcardtoolid%3D9%26target%3D' . $dogid . '%26ajax%3D1%26m%3DUse&Ajax_CallBackArgument2=receiver%3D' . $dogid . '%26relatedCardID%3D0%26msg%3D%26withDemonCard%3Dfalse';
+                curl_setopt($this->ch, CURLOPT_URL, $urlp);
+                curl_setopt($this->ch, CURLOPT_REFERER, 'http://my.mtime.com/app/card/tools/use/9/?target=' . $dogid);
+                curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Host:sandbox.my.mtime.com"));
+                $pand_response_text = curl_exec($this->ch);
+                echo "first panda\r\n";
+                sleep(2);
+                if(!$this->testShaoXiang($dogid)){
+                    $t = $this->generatorT();
+                    $urlp = 'http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ftools%2Fuse%2F9%2F%3Ftarget%3D' . $dogid . '&t=' . $t . '&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Ftools%2Fusetoolcard.aspx%3Fcardtoolid%3D9%26target%3D' . $dogid . '%26ajax%3D1%26m%3DUse&Ajax_CallBackArgument2=receiver%3D' . $dogid . '%26relatedCardID%3D0%26msg%3D%26withDemonCard%3Dfalse';
+                    curl_setopt($this->ch, CURLOPT_URL, $urlp);
+                    curl_setopt($this->ch, CURLOPT_REFERER, 'http://my.mtime.com/app/card/tools/use/9/?target=' . $dogid);
+                    curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Host:sandbox.my.mtime.com"));
+                    echo "second panda\r\n";
+                }
+            }
+        }
+    }
 
+    private function testShaoXiang($dogid){
+        $t = $this->generatorT();
+        $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ffriend%2F'.$dogid.'%2Findex-1.html%23f&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=friend%2F'.$dogid.'%2Findex-1.html';
+        curl_setopt($this->ch,CURLOPT_URL,$url);
+        curl_setopt($this->ch,CURLOPT_REFERER,'http://my.mtime.com/app/card/friend/'.$dogid.'/index-1.html');
+        curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Host:sandbox.my.mtime.com"));
+        $response_text=curl_exec($this->ch);
+        if(stristr($response_text,'card_shaoxiang')){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function crawlXlPage(){

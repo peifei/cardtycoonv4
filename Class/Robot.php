@@ -85,6 +85,14 @@ class Robot {
         }
     }
 
+    public function doPanda(){
+        $dogIdArr=array('12345','678910');
+        foreach($dogIdArr as $dogId){
+            $this->crawler->panda('2128449');
+            sleep(30);
+        }
+    }
+
     public function refreshAllCards(){
         CardListSingleton::getInstance()->init();
         $this->refreshPocket();

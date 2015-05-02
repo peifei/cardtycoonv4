@@ -4,8 +4,11 @@ require_once 'autoload.php';
 $robot=new Robot();
 //$robot->run();
 $robot->login();
+//$robot->refreshPocket();
 //$robot->updateXlPic();
-$robot->refreshXL();
+//$robot->refreshXL();
+
+$robot->doPanda();
 
 /**
  * get config info
