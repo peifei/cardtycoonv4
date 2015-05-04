@@ -86,9 +86,10 @@ class Robot {
     }
 
     public function doPanda(){
-        $dogIdArr=array('12345','678910');
+        $dogIdArr=array('1148807','1625059');
         foreach($dogIdArr as $dogId){
-            $this->crawler->panda('2128449');
+			echo "current id is $dogId \r\n";
+            $this->crawler->panda($dogId);
             sleep(30);
         }
     }

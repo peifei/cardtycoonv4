@@ -215,6 +215,12 @@ class Crawler {
         for($i=0;$i<20000;$i++){
             if($i%100==0){
                 echo "*********$i**********\r\n";
+                $dogIdArr=array('1148807','1625059');
+                foreach($dogIdArr as $dogId){
+                    echo "current id is $dogId \r\n";
+                    $this->panda($dogId);
+                    sleep(30);
+                }
             }
             $t=$this->generatorT();
             $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteCallback&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=%2Fmy%2Fdiscard.aspx%3Fajax%3D1%26m%3DGenerateCardGold&Ajax_CallBackArgument2=';
@@ -263,9 +269,9 @@ class Crawler {
 
     public function panda($dogid){
         $t=$this->generatorT();
-        $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ffriend%2F'.$dogid.'%2Findex-1.html%23f&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=friend%2F'.$dogid.'%2Findex-1.html';
-        curl_setopt($this->ch,CURLOPT_URL,$url);
-        curl_setopt($this->ch,CURLOPT_REFERER,'http://my.mtime.com/app/card/friend/'.$dogid.'/index-1.html');
+        $url='http://sandbox.my.mtime.com/Service/callback.mc?Ajax_CallBack=true&Ajax_CallBackType=Mtime.MemberCenter.Pages.CallbackService&Ajax_CallBackMethod=RemoteLoad&Ajax_CrossDomain=1&Ajax_RequestUrl=http%3A%2F%2Fmy.mtime.com%2Fapp%2Fcard%2Ffriend%2F'.$dogid.'%2F&t='.$t.'&Ajax_CallBackArgument0=card&Ajax_CallBackArgument1=friend%2F'.$dogid.'%2F';
+		curl_setopt($this->ch,CURLOPT_URL,$url);
+        curl_setopt($this->ch,CURLOPT_REFERER,'http://my.mtime.com/app/card/friend/'.$dogid.'/');
         curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Host:sandbox.my.mtime.com"));
         $response_text=curl_exec($this->ch);
         //判断是否登录
@@ -286,10 +292,15 @@ class Crawler {
                     curl_setopt($this->ch, CURLOPT_URL, $urlp);
                     curl_setopt($this->ch, CURLOPT_REFERER, 'http://my.mtime.com/app/card/tools/use/9/?target=' . $dogid);
                     curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Host:sandbox.my.mtime.com"));
+					curl_exec($this->ch);
                     echo "second panda\r\n";
                 }
-            }
-        }
+            }else{
+				echo "$dogid is shao xiang.\r\n";
+			}
+        }else{
+			echo "$dogid is not online.\r\n";
+		}
     }
 
     private function testShaoXiang($dogid){

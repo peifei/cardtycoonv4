@@ -6,9 +6,8 @@ $robot=new Robot();
 $robot->login();
 //$robot->refreshPocket();
 //$robot->updateXlPic();
-//$robot->refreshXL();
+$robot->refreshXL();
 
-$robot->doPanda();
 
 /**
  * get config info
